@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class LoginController extends ChangeNotifier {
   String _email = '';
@@ -6,20 +6,28 @@ class LoginController extends ChangeNotifier {
   bool _remember = false;
   bool _obscure = true;
   bool _submitting = false;
+  final Map<String, String> _errors = {};
+
+  // Controllers to preserve text across rebuilds
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   String get email => _email;
   String get password => _password;
   bool get remember => _remember;
   bool get obscure => _obscure;
   bool get submitting => _submitting;
+  String? errorFor(String key) => _errors[key];
 
   void setEmail(String v) {
     _email = v.trim();
+    _errors.remove('email');
     notifyListeners();
   }
 
   void setPassword(String v) {
     _password = v;
+    _errors.remove('password');
     notifyListeners();
   }
 
@@ -38,10 +46,30 @@ class LoginController extends ChangeNotifier {
     _submitting = true;
     notifyListeners();
     try {
+      // Ensure strings reflect controller values
+      _email = emailController.text.trim();
+      _password = passwordController.text;
       await onLogin(_email, _password, _remember);
     } finally {
       _submitting = false;
       notifyListeners();
     }
+  }
+
+  void setFieldErrors(Map<String, List<String>>? fieldErrors) {
+    _errors.clear();
+    if (fieldErrors != null) {
+      fieldErrors.forEach((k, v) {
+        if (v.isNotEmpty) _errors[k] = v.first;
+      });
+    }
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 }

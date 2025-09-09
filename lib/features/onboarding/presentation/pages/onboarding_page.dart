@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/routes/app_router.dart';
+import '../../../../core/storage/local_storage.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -11,8 +13,8 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    const baseW = 375.0; // Figma base width
-    const baseH = 812.0; // Figma base height (typical iPhone frame)
+    const baseW = 375.0;
+    const baseH = 812.0;
     final sw = size.width / baseW;
     final sh = size.height / baseH;
     final theme = Theme.of(context);
@@ -21,10 +23,8 @@ class OnboardingPage extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          // Background watermark logo
           _BackgroundWatermark(sw: sw, sh: sh),
 
-          // Top brand (logo_docdo.svg) positioned independently so it doesn't affect layout below
           Positioned(
             left: 0,
             right: 0,
@@ -32,18 +32,13 @@ class OnboardingPage extends StatelessWidget {
             child: const _TopBrand(),
           ),
 
-          // Content
           SafeArea(
             child: Column(
               children: [
-                // (TopBrand removed from flow to avoid shifting the rest)
-
-                // Doctor image with bottom white gradient OVERLAY (on top of the image)
                 Expanded(
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
-                      // Doctor image per spec (Width 375, Height 491, Top ~120.5) with Crop and centered composition
                       Positioned(
                         left: 0,
                         top: 120.5 * sh,
@@ -53,17 +48,15 @@ class OnboardingPage extends StatelessWidget {
                             height: 491 * sh,
                             child: Image.asset(
                               'assets/images/onboarding.png',
-                              fit: BoxFit.cover, // crop behavior
+                              fit: BoxFit.cover,
                               alignment: Alignment.topCenter,
                             ),
                           ),
                         ),
                       ),
-
-                      // Overlay gradient ON the image: starts at doctor's bottom; blends with current theme background
                       Positioned(
                         left: 0,
-                        top: 372.5 * sh, // 120.5 + 491 - 239
+                        top: 372.5 * sh,
                         child: IgnorePointer(
                           child: Container(
                             width: 375 * sw,
@@ -73,10 +66,10 @@ class OnboardingPage extends StatelessWidget {
                                 begin: Alignment.bottomCenter,
                                 end: Alignment.topCenter,
                                 colors: [
-                                  bgColor,                     // 0%: fully opaque to hide bottom of doctor
-                                  bgColor,                     // 20%: keep it heavy a bit longer
-                                  bgColor.withValues(alpha: 0.80),   // 40%: slightly stronger mid fade
-                                  bgColor.withValues(alpha: 0.0),    // 100%: fully transparent
+                                  bgColor,
+                                  bgColor,
+                                  bgColor.withValues(alpha: 0.80),
+                                  bgColor.withValues(alpha: 0.0),
                                 ],
                                 stops: const [0.0, 0.20, 0.40, 1.0],
                               ),
@@ -84,16 +77,12 @@ class OnboardingPage extends StatelessWidget {
                           ),
                         ),
                       ),
-
-                      // Title over the image and gradient (subtitle will be below)
                       Positioned(
                         left: 24,
                         right: 24,
                         top: 504.5 * sh,
                         child: const _Title(),
                       ),
-
-                      // Subtitle positioned just below the title (approx 96px title height + 8px gap)
                       Positioned(
                         left: 24,
                         right: 24,
@@ -109,17 +98,20 @@ class OnboardingPage extends StatelessWidget {
             ),
           ),
 
-          // CTA positioned absolutely to control vertical placement precisely per Figma
           Positioned(
             left: 0,
             right: 0,
-            top: 703 * sh, // Figma top ~703px
+            top: 703 * sh,
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints.tightFor(width: 327 * sw, height: 56),
                 child: _PrimaryButton(
                   text: 'Get Started',
-                  onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
+                  onPressed: () async {
+                    await LocalStorage.instance.setOnboardingSeen(true);
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+                  },
                 ),
               ),
             ),

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/routes/app_router.dart';
 import '../controllers/login_controller.dart';
 import '../widgets/login_fields.dart';
 import '../widgets/remember_forgot_row.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/social_section.dart';
+import '../../../../../core/storage/local_storage.dart';
+import '../../../data/auth_repository.dart';
+import '../../../../../core/network/api_error.dart';
+import '../../../../../core/widgets/app_flushbar.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -21,7 +26,6 @@ class LoginPage extends StatelessWidget {
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Layout paddings tuned to match the mock
               const side = 24.0;
               return SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(side, 72, side, 24),
@@ -31,7 +35,6 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
                           'Welcome Back',
                           style: theme.textTheme.headlineSmall?.copyWith(
@@ -42,7 +45,6 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // Subtitle
                         Text(
                           "We're excited to have you back, can't wait to see what you've been up to since you last logged in.",
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -52,16 +54,10 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 36),
-
-                        // Fields block
                         const LoginFields(),
                         const SizedBox(height: 16),
-
-                        // Remember / Forgot
                         const RememberForgotRow(),
                         const SizedBox(height: 24),
-
-                        // Login button
                         Consumer<LoginController>(
                           builder: (context, c, _) {
                             final emailValid = RegExp(r'^\S+@\S+\.\S+$').hasMatch(c.email);
@@ -71,12 +67,33 @@ class LoginPage extends StatelessWidget {
                               text: 'Login',
                               enabled: enabled,
                               loading: c.submitting,
+                              onDisabledPressed: () async {
+                                final missing = <String>[];
+                                if (!emailValid) missing.add('Valid email');
+                                if (!passValid) missing.add('Password (min 6 chars)');
+                                if (context.mounted && missing.isNotEmpty) {
+                                  await showTopFlushbar(context, 'Please fill: ${missing.join(', ')}');
+                                }
+                              },
                               onPressed: () async {
                                 await c.submit(onLogin: (email, password, remember) async {
-                                  // TODO: integrate real auth API
-                                  await Future.delayed(const Duration(seconds: 1));
-                                  if (context.mounted) {
-                                    Navigator.of(context).pushReplacementNamed('/home');
+                                  try {
+                                    final (token, user) = await AuthRepository.instance.login(
+                                      email: email,
+                                      password: password,
+                                    );
+                                    await LocalStorage.instance.setToken(token, remember: c.remember);
+                                    if (context.mounted) {
+                                      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+                                    }
+                                  } catch (e) {
+                                    final msg = (e is ApiError) ? e.message : 'Login failed';
+                                    if (e is ApiError) {
+                                      c.setFieldErrors(e.fieldErrors);
+                                    }
+                                    if (context.mounted) {
+                                      await showTopFlushbar(context, msg);
+                                    }
                                   }
                                 });
                               },
@@ -85,7 +102,6 @@ class LoginPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
 
-                        // Divider with text
                         Row(
                           children: [
                             Expanded(child: Divider(color: isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0xFFE9ECEF)) ),
@@ -97,12 +113,8 @@ class LoginPage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 24),
-
-                        // Social section
                         const SocialSection(),
                         const SizedBox(height: 24),
-
-                        // Legal
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: RichText(
@@ -135,8 +147,6 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-
-                        // Signup prompt
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -147,7 +157,9 @@ class LoginPage extends StatelessWidget {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).pushReplacementNamed(AppRoutes.signup);
+                              },
                               style: TextButton.styleFrom(
                                 foregroundColor: AppColors.primary,
                               ),

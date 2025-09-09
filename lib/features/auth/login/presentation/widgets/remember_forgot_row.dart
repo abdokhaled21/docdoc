@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import '../controllers/login_controller.dart';
+import '../../../../../core/routes/app_router.dart';
 
 class RememberForgotRow extends StatelessWidget {
   const RememberForgotRow({super.key});
@@ -58,7 +59,10 @@ class RememberForgotRow extends StatelessWidget {
         Text('Remember me', style: theme.textTheme.bodyMedium?.copyWith(color: textColor)),
         const Spacer(),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            Navigator.of(context).pushNamed(AppRoutes.forgot);
+          },
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
             minimumSize: const Size(0, 0),

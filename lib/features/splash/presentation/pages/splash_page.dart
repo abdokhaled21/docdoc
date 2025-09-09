@@ -3,8 +3,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-// Navigates to onboarding via named route
+import '../../../../core/routes/app_router.dart';
+import '../../../../core/storage/local_storage.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -19,7 +19,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   late final Animation<double> _logoFade;
   late final Animation<double> _exitFade;
   static const _introDuration = Duration(milliseconds: 1000);
-  static const _holdDuration = Duration(milliseconds: 2000); // keep splash longer
+  static const _holdDuration = Duration(milliseconds: 2000);
   static const _exitDuration = Duration(milliseconds: 550);
 
   @override
@@ -40,14 +40,21 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
       CurvedAnimation(parent: _exitController, curve: Curves.easeIn),
     );
 
-    // play intro
     _logoController.forward();
 
-    // after a short delay, play exit then navigate
     Timer(_holdDuration + _introDuration, () async {
       await _exitController.forward();
       if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed('/onboarding');
+      final token = await LocalStorage.instance.getToken();
+      String next;
+      if (token != null && token.isNotEmpty) {
+        next = AppRoutes.home;
+      } else {
+        final seen = await LocalStorage.instance.getOnboardingSeen();
+        next = seen ? AppRoutes.login : AppRoutes.onboarding;
+      }
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(next, (route) => false);
     });
   }
 
@@ -64,16 +71,13 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background: faint shapes directly from your logo.svg
           const _LogoWatermark(),
-          // Foreground logo positioned per spec (Left: 53, Top: 370)
           Positioned(
             left: 56,
             top: 370,
             child: AnimatedBuilder(
               animation: Listenable.merge([_logoController, _exitController]),
               builder: (context, _) {
-                // Keep fade only to preserve exact dimensions
                 return Opacity(
                   opacity: _logoFade.value * _exitFade.value,
                   child: const _ForegroundLogo(width: 268.29, height: 72),
@@ -114,7 +118,6 @@ class _LogoWatermark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Positioned per spec: Left -34, Top 183.93, 180° rotation, opacity 5%
     return const Positioned(
       left: -34,
       top: 183.93,
@@ -131,7 +134,7 @@ class _RotatedWatermark extends StatelessWidget {
     return Opacity(
       opacity: 0.05,
       child: Transform.rotate(
-        angle: math.pi, // 180°
+        angle: math.pi,
         child: SizedBox(
           width: 443,
           height: 443.07,
