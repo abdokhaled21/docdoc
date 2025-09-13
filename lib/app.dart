@@ -15,7 +15,6 @@ class DocDocApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       initialRoute: AppRoutes.splash,
       onGenerateRoute: AppRouter.onGenerateRoute,
-      // Global keyboard dismiss when tapping outside inputs anywhere in the app
       builder: (context, child) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,

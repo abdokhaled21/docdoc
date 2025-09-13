@@ -15,9 +15,9 @@ class LoginFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0x1A000000); // ~6% black
+    final borderColor = isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0x1A000000);
     final focusColor = AppColors.primary;
-    final hintColor = isDark ? Colors.white.withValues(alpha: 0.55) : const Color(0x99000000); // ~60% black
+    final hintColor = isDark ? Colors.white.withValues(alpha: 0.55) : const Color(0x99000000);
 
     return Consumer<LoginController>(
       builder: (context, c, _) {

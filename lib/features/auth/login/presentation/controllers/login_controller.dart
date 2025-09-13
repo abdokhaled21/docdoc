@@ -8,7 +8,6 @@ class LoginController extends ChangeNotifier {
   bool _submitting = false;
   final Map<String, String> _errors = {};
 
-  // Controllers to preserve text across rebuilds
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -46,7 +45,6 @@ class LoginController extends ChangeNotifier {
     _submitting = true;
     notifyListeners();
     try {
-      // Ensure strings reflect controller values
       _email = emailController.text.trim();
       _password = passwordController.text;
       await onLogin(_email, _password, _remember);

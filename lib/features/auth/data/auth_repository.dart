@@ -41,10 +41,8 @@ class AuthRepository {
     required String passwordConfirmation,
   }) async {
     try {
-      // Map gender string to numeric code and include both per backend requirement (English only)
-      // Spec: male=0, female=1
       final normalized = gender.toLowerCase().trim();
-      final int genderCode = (normalized == 'female' || normalized == 'f') ? 1 : 0; // male default 0
+      final int genderCode = (normalized == 'female' || normalized == 'f') ? 1 : 0;
       final form = FormData.fromMap({
         'name': name,
         'email': email,
@@ -62,6 +60,14 @@ class AuthRepository {
       }
       final user = (data['user'] ?? data['data']?['user']);
       return (token, user is Map<String, dynamic> ? user : null);
+    } catch (e) {
+      throw ApiError.fromDio(e);
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _dio.post(Endpoints.logout);
     } catch (e) {
       throw ApiError.fromDio(e);
     }

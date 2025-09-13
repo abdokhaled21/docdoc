@@ -36,7 +36,6 @@ class SignupPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
                           'Create Account',
                           style: theme.textTheme.headlineSmall?.copyWith(
@@ -47,7 +46,6 @@ class SignupPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // Subtitle
                         Text(
                           "Sign up now and start exploring all that our app has to offer. We're excited to welcome you to our community!",
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -57,12 +55,8 @@ class SignupPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 36),
-
-                        // Fields block
                         const SignupFields(),
                         const SizedBox(height: 24),
-
-                        // Create Account button
                         Consumer<SignupController>(
                           builder: (context, c, _) {
                             final emailValid = RegExp(r'^\S+@\S+\.\S+$').hasMatch(c.email);
@@ -125,8 +119,6 @@ class SignupPage extends StatelessWidget {
                           },
                         ),
                         const SizedBox(height: 24),
-
-                        // Divider with text
                         Row(
                           children: [
                             Expanded(child: Divider(color: isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0xFFE9ECEF)) ),
@@ -138,12 +130,8 @@ class SignupPage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 24),
-
-                        // Social section
                         const SocialSection(),
                         const SizedBox(height: 24),
-
-                        // Legal
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: RichText(
@@ -176,8 +164,6 @@ class SignupPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-
-                        // Already have account -> Sign In
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -306,7 +292,6 @@ class _NameGenderSheetState extends State<_NameGenderSheet> {
                 ),
               ),
               const SizedBox(height: 12),
-              // Name
               SizedBox(
                 height: 56,
                 child: TextFormField(
@@ -327,7 +312,6 @@ class _NameGenderSheetState extends State<_NameGenderSheet> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Gender
               Row(
                 children: [
                   chip('male', 'Male'),
@@ -340,7 +324,6 @@ class _NameGenderSheetState extends State<_NameGenderSheet> {
                 Text(genderError, style: TextStyle(color: Colors.red.shade700, fontSize: 12)),
               ],
               const SizedBox(height: 20),
-              // Confirm password
               SizedBox(
                 height: 56,
                 child: TextFormField(
@@ -355,7 +338,6 @@ class _NameGenderSheetState extends State<_NameGenderSheet> {
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     enabledBorder: _border(context, (confirmError != null || confirmMismatch) ? Colors.red : borderColor),
                     focusedBorder: _border(context, (confirmError != null || confirmMismatch) ? Colors.red : focusColor),
-                    // keep server error text, and add local helper below
                     errorText: confirmError,
                     suffixIcon: IconButton(
                       onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),

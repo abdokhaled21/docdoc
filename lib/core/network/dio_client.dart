@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 
 import 'endpoints.dart';
 import '../storage/local_storage.dart';
@@ -37,7 +38,6 @@ class DioClient {
       },
     ));
 
-    // Attach Authorization bearer token if available (skip auth endpoints)
     d.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         try {
@@ -55,8 +55,33 @@ class DioClient {
       },
       onError: (e, handler) async {
         if (e.response?.statusCode == 401) {
-          // Token invalid/expired; clear it so Splash can redirect next launch
           await LocalStorage.instance.clearToken();
+        }
+        if (e.response?.statusCode == 429) {
+          final req = e.requestOptions;
+          final prev = (req.extra['retry_count'] as int?) ?? 0;
+          if (prev < 3) {
+            final delayMs = 500 * (1 << prev);
+            if (kDebugMode) debugPrint('429 received. Retrying in ${delayMs}ms (attempt ${prev + 1})');
+            await Future<void>.delayed(Duration(milliseconds: delayMs));
+            final newReq = RequestOptions(
+              path: req.path,
+              baseUrl: req.baseUrl,
+              queryParameters: req.queryParameters,
+              data: req.data,
+              headers: req.headers,
+              method: req.method,
+              sendTimeout: req.sendTimeout,
+              receiveTimeout: req.receiveTimeout,
+              extra: {...req.extra, 'retry_count': prev + 1},
+            );
+            try {
+              final response = await d.fetch(newReq);
+              return handler.resolve(response);
+            } catch (err) {
+              return handler.next(err as DioException);
+            }
+          }
         }
         handler.next(e);
       },

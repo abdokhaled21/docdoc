@@ -25,7 +25,6 @@ class RememberForgotRow extends StatelessWidget {
                     if (states.contains(WidgetState.selected)) {
                       return const BorderSide(color: AppColors.primary, width: 1.6);
                     }
-                    // Grey border when not selected
                     return BorderSide(
                       color: isDark ? Colors.white.withValues(alpha: 0.24) : const Color(0xFFDEE2E6),
                       width: 1.4,
@@ -38,18 +37,13 @@ class RememberForgotRow extends StatelessWidget {
                 onChanged: c.toggleRemember,
                 visualDensity: VisualDensity.compact,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                // Blue check to match brand
                 checkColor: AppColors.primary,
-                // Keep background white when selected so the blue check is clear
                 fillColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    // Dark mode: use dark fill so it blends with theme, not white
                     return isDark ? const Color(0xFF1F2937) : Colors.white;
                   }
-                  // Grey box when not selected
                   return isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF3F4F6);
                 }),
-                // Subtle blue hover/focus ripple
                 overlayColor: WidgetStatePropertyAll(AppColors.primary.withValues(alpha: 0.08)),
               ),
             ),

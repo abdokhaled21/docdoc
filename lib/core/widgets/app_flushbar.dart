@@ -15,7 +15,6 @@ Future<void> showTopFlushbar(
   final cs = theme.colorScheme;
   final isDark = theme.brightness == Brightness.dark;
 
-  // Resolve colors by variant (overridden by explicit color if provided)
   Color variant;
   IconData resolvedIcon;
   switch (type) {
@@ -33,11 +32,10 @@ Future<void> showTopFlushbar(
       break;
   }
 
-  // Blend variant with surface to get subtle bg that works in light/dark
   final surface = cs.surface;
   final blendAlpha = isDark ? 0.22 : 0.10;
   final bg = Color.alphaBlend(variant.withValues(alpha: blendAlpha), surface);
-  final fg = cs.onSurface; // readable on blended surface
+  final fg = cs.onSurface;
 
   await Flushbar(
     messageText: Text(

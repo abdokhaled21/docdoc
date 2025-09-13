@@ -15,9 +15,8 @@ class SignupController extends ChangeNotifier {
   int _phoneDigits = 0;
   int _phoneMin = 0;
   int _phoneMax = 0;
-  String _gender = ''; // 'male' | 'female'
+  String _gender = '';
   final Map<String, String> _errors = {};
-  // Controllers to persist values in fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -117,7 +116,6 @@ class SignupController extends ChangeNotifier {
     _submitting = true;
     notifyListeners();
     try {
-      // Ensure we submit current controller values
       _email = emailController.text.trim();
       _password = passwordController.text;
       await onSignup(_name, _email, _password, _phone, _countryCode, _gender);

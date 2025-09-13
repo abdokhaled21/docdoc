@@ -43,6 +43,7 @@ dependencies:
   country_picker: ^2.0.27
   dio: ^5.9.0
   another_flushbar: ^1.12.32
+  google_fonts: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/icons/Doctor Speciality/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

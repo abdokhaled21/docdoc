@@ -79,7 +79,6 @@ class ForgotPasswordPage extends StatelessWidget {
                     loading: c.submitting,
                     onPressed: () async {
                       await c.submit(onSubmit: (value) async {
-                        // TODO: call backend to send reset link / OTP
                         await Future.delayed(const Duration(seconds: 1));
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

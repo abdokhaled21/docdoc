@@ -16,9 +16,9 @@ class PhoneNumberField extends StatefulWidget {
     this.controller,
   });
 
-  final String initialIsoCode; // e.g. 'GB'
+  final String initialIsoCode;
   final String hintText;
-  final void Function(String fullE164WithoutPlus) onChanged; // only number part callback
+  final void Function(String fullE164WithoutPlus) onChanged;
   final void Function(String dialCode, String isoCode) onCountryChanged;
   final void Function({required int digits, required int min, required int max, required bool valid})? onInfoChanged;
   final bool isError;
@@ -66,7 +66,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   void didUpdateWidget(covariant PhoneNumberField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialIsoCode.toUpperCase() != widget.initialIsoCode.toUpperCase()) {
-      // Sync selected country with new initial ISO
       setState(() {
         _country = Country.parse(widget.initialIsoCode);
       });
@@ -114,7 +113,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                   showPhoneCode: true,
                   useSafeArea: true,
                   countryListTheme: CountryListThemeData(
-                    // Match app theme for both light and dark (avoid deprecated dialogBackgroundColor)
                     backgroundColor: theme.dialogTheme.backgroundColor ?? theme.colorScheme.surface,
                     textStyle: TextStyle(color: theme.colorScheme.onSurface),
                     bottomSheetHeight: 500,
@@ -154,7 +152,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                     Text(_country.flagEmoji, style: const TextStyle(fontSize: 18)),
                     const SizedBox(width: 6),
                     const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
-                    // vertical divider
                     const SizedBox(width: 12),
                     Container(width: 1, height: 24, color: borderColor),
                     const SizedBox(width: 12),
@@ -166,7 +163,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           ),
           onChanged: (v) {
             final onlyDigits = v.replaceAll(RegExp(r'\D'), '');
-            // handle trunk '0' commonly used in many countries (e.g., EG):
             final trunkStripped = (onlyDigits.startsWith('0')) ? onlyDigits.substring(1) : onlyDigits;
             _digits = trunkStripped.length;
             _valid = _digits >= _min && _digits <= _max;

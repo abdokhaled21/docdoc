@@ -16,9 +16,9 @@ class SignupFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0x1A000000); // ~6% black
+    final borderColor = isDark ? Colors.white.withValues(alpha: 0.12) : const Color(0x1A000000);
     final focusColor = AppColors.primary;
-    final hintColor = isDark ? Colors.white.withValues(alpha: 0.55) : const Color(0x99000000); // ~60% black
+    final hintColor = isDark ? Colors.white.withValues(alpha: 0.55) : const Color(0x99000000);
 
     return Consumer<SignupController>(
       builder: (context, c, _) {
@@ -27,7 +27,6 @@ class SignupFields extends StatelessWidget {
         final phoneError = c.errorFor('phone');
         return Column(
           children: [
-            // Email
             SizedBox(
               height: 56,
               child: TextFormField(
@@ -57,7 +56,6 @@ class SignupFields extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 16),
-            // Password
             SizedBox(
               height: 56,
               child: TextFormField(
@@ -82,7 +80,6 @@ class SignupFields extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Phone with country code (all countries via intl_phone_field)
             PhoneNumberField(
               hintText: 'Your number',
               initialIsoCode: c.countryIso,

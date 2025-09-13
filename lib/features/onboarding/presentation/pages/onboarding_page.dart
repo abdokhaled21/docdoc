@@ -158,9 +158,9 @@ class _BackgroundWatermark extends StatelessWidget {
       left: -87 * sw,
       top: 144.93 * sh,
       child: Opacity(
-        opacity: 0.06, // 6%
+        opacity: 0.06,
         child: Transform.rotate(
-          angle: math.pi, // 180°
+          angle: math.pi,
           child: SizedBox(
             width: 443 * sw,
             height: 443.07 * sh,
@@ -220,8 +220,8 @@ class _Subtitle extends StatelessWidget {
           'Manage and schedule all of your medical appointments easily with Docdoc to get a new experience.',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 12, // slightly larger for readability
-                height: 1.5,  // 150%
+                fontSize: 12,
+                height: 1.5,
                 fontWeight: FontWeight.w400,
                 color: color,
                 letterSpacing: 0,

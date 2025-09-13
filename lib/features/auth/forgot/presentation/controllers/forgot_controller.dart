@@ -16,7 +16,7 @@ class ForgotController extends ChangeNotifier {
     if (_input.isEmpty) return false;
     final isEmail = RegExp(r'^\S+@\S+\.\S+$').hasMatch(_input);
     final digits = _input.replaceAll(RegExp(r'\D'), '');
-    final isPhone = digits.length >= 7; // simple sanity check; backend will validate precisely
+    final isPhone = digits.length >= 7;
     return isEmail || isPhone;
   }
 
